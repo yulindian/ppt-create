@@ -1,0 +1,4 @@
+interface:
+  display_name: "PPT Edit"
+  short_description: "Convert visual slide sources into editable PPT decks."
+  default_prompt: "Use $ppt-edit to convert this PPT/PDF/image slide source into an editable PowerPoint deck with visible original-image pages and hidden editable reconstruction pages."
