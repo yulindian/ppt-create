@@ -1,6 +1,6 @@
 ---
 name: ppt-create
-description: Create Chinese classroom courseware as image-based PPTX and PDF from a user-provided outline, style prompt, and optional reference images. Use when the user asks to make PPT/PDF课件, directly generate slide images, synthesize a PPT, output a PDF made from slide images, remove page labels from image-based PPTs, or follow the established workflow with fixed teacher name 小余老师, no page-number/page-type labels, and final PPT plus PDF delivery.
+description: Create Chinese classroom courseware as image-based PPTX and PDF from a user-provided outline, style prompt, and optional reference images. Use when the user asks to make PPT/PDF课件, directly generate slide images, synthesize a PPT, output a PDF made from slide images, remove page labels from image-based PPTs, or follow the established workflow with fixed teacher name 小余老师, no page-number/page-type labels, and final PPT plus PDF delivery. This skill requires using the image generation tool to render each complete slide image; do not substitute shape-only, code-drawn, or template-only slide construction unless the user explicitly asks for an editable-object version.
 ---
 
 # PPT Create
@@ -21,6 +21,23 @@ Create a complete image-based courseware deck: generate one finished 16:9 slide 
 ## Triggered Dependencies
 
 Use the built-in image generation tool for slide images. For packaging, use the bundled scripts in this skill or the existing `xhs-ppt-recreation` packaging scripts when they are already available.
+
+## Mandatory Image Generation
+
+This workflow is image-first. For every newly created deck, call the image generation tool to render one complete final slide image per page.
+
+Do not replace image generation with:
+
+- shape-only PPT construction,
+- code-drawn layouts,
+- manually assembled stock backgrounds plus text overlays,
+- SVG-only mockups,
+- template-only decks,
+- or an editable-object PPT workflow.
+
+Only skip image generation when the user explicitly asks for an editable-object PPT, a text-only outline, or a non-image draft. If the user says "直接生图", "根据先前流程", "制作PPT", or asks for the final PPT/PDF under this skill, treat image generation as required.
+
+Each generated slide image must already contain the full slide design: title, body copy, visual scene, illustrations, cards, decorative elements, and background. PPTX and PDF packaging must use those final images as full-page slides.
 
 ## Workflow
 
