@@ -9,6 +9,19 @@ from pptx import Presentation
 from pptx.util import Inches
 
 
+SUPPORTED_SUFFIXES = {".png", ".jpg", ".jpeg"}
+
+
+def collect_slide_images(slides_dir):
+    files = [
+        file for file in slides_dir.iterdir()
+        if file.is_file()
+        and file.name.lower().startswith("slide-")
+        and file.suffix.lower() in SUPPORTED_SUFFIXES
+    ]
+    return sorted(files, key=lambda file: file.name.lower())
+
+
 def add_full_slide_image(prs, image_path):
     blank = prs.slide_layouts[6]
     slide = prs.slides.add_slide(blank)
@@ -16,17 +29,17 @@ def add_full_slide_image(prs, image_path):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Create a PPTX from ordered slide-*.png images.")
-    parser.add_argument("--slides-dir", required=True, help="Directory containing slide-01.png, slide-02.png, ...")
+    parser = argparse.ArgumentParser(description="Create a PPTX from ordered slide images.")
+    parser.add_argument("--slides-dir", required=True, help="Directory containing slide-01.png/jpg, slide-02.png/jpg, ...")
     parser.add_argument("--out", required=True, help="Output PPTX path")
     parser.add_argument("--expected-count", type=int, default=None, help="Fail if the image count differs")
     args = parser.parse_args()
 
     slides_dir = Path(args.slides_dir)
     out_pptx = Path(args.out)
-    files = sorted(slides_dir.glob("slide-*.png"))
+    files = collect_slide_images(slides_dir)
     if not files:
-        raise SystemExit(f"No slide-*.png files found in {slides_dir}")
+        raise SystemExit(f"No slide images found in {slides_dir}")
     if args.expected_count is not None and len(files) != args.expected_count:
         raise SystemExit(f"Expected {args.expected_count} images, got {len(files)}")
 
@@ -57,6 +70,7 @@ def main():
         "output": str(out_pptx),
         "slides": slide_count,
         "images": len(files),
+        "source_dir": str(slides_dir),
         "size_mb": round(out_pptx.stat().st_size / 1024 / 1024, 2),
     }, ensure_ascii=False))
 
