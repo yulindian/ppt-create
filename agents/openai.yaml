@@ -1,4 +1,4 @@
 interface:
   display_name: "PPT Create"
-  short_description: "Create image-based PPT and PDF courseware."
-  default_prompt: "Use $ppt-create to create an image-based classroom PPT and matching PDF from my outline and style prompt."
+  short_description: "Create polished image-based PPT/PDF decks from outlines, style prompts, and illustration references."
+  default_prompt: "Use $ppt-create to create a polished image-based PPT/PDF deck from my outline, style prompt, and reference illustrations."
