@@ -97,17 +97,40 @@ If an image must appear as a required page asset rather than a style reference, 
 3. Extract deck title, page count, page list, audience, page copy, visual style, fixed text, reference image roles, and negative constraints.
 4. Ask for exact signature/credit text if any page or file naming calls for one and the user has not already specified it.
 5. Build the full page list before generating images. Include cover, agenda/route pages, transition pages, content pages, activity pages, summary pages, and closing pages when useful for the user's outline.
-6. Write one shared style brief for the whole deck: palette, illustration style, typography, layout language, tone, reference-image usage, and negative constraints.
-7. Draft one image prompt per slide using the shared style brief.
-8. Generate one complete slide image per page with the image generation tool.
-9. Save final images in order as `slide-01.png`, `slide-02.png`, etc. Never leave project-bound final images only under the image generation default folder.
-10. Create a montage preview for visual review.
-11. Regenerate or repair pages with visible defects.
-12. Create compressed packaging images in `slides_pack/` from the approved PNG originals using JPG, max `1920x1080`, quality `90`.
-13. Package PDF from `slides_pack/`; use `slides/` only when compression makes text visibly worse.
-14. If page count is greater than 30, also output chunk PDFs in 30-page batches. Always keep the single complete PDF too.
-15. Create image-based PPTX only when the user explicitly asks for PPTX output.
-16. Verify image count, PDF page count, chunk PDF ranges when applicable, montage or representative rendered pages, and PPTX slide count when applicable before claiming completion.
+6. Group the full page list into semantic modules before generation. A module is a continuous idea, lesson, chapter, story beat, comparison, activity sequence, or summary sequence that should feel visually related. Record each module's page range, visual motif, layout family, and anchor page. Do not derive modules from a fixed generation batch size.
+7. Write one deck-level style brief: palette, illustration style, typography, layout language, tone, reference-image usage, and negative constraints. Then add a short module-level brief for each semantic module: its recurring motif, composition logic, and permitted variation.
+8. Draft one image prompt per slide using both the deck-level brief and its module-level brief. Generate the module's anchor page first; generate dependent pages with the anchor page or the nearest approved page from that module as visual context when the tool supports references.
+9. Generate one complete slide image per page with the image generation tool.
+10. Save final images in order as `slide-01.png`, `slide-02.png`, etc. Never leave project-bound final images only under the image generation default folder.
+11. Create a montage preview for visual review. Inspect both whole-deck continuity and every multi-page semantic module at readable scale.
+12. Regenerate or repair pages with visible defects or module drift. When revising an already delivered deck, preserve the prior version unless the user explicitly asks to overwrite it; use a clear revision folder or suffix such as `_V2`.
+13. Create compressed packaging images in `slides_pack/` from the approved PNG originals using JPG, max `1920x1080`, quality `90`.
+14. Package PDF from `slides_pack/`; use `slides/` only when compression makes text visibly worse.
+15. If page count is greater than 30, also output chunk PDFs in 30-page batches. Always keep the single complete PDF too.
+16. Create image-based PPTX only when the user explicitly asks for PPTX output.
+17. Verify image count, PDF page count, chunk PDF ranges when applicable, montage or representative rendered pages, and PPTX slide count when applicable before claiming completion.
+
+## Semantic Modules And Review Batches
+
+Keep semantic grouping separate from generation and review batching.
+
+- A review request such as “make the first three pages, then continue after approval” controls when pages are shown to the user. It does not make those three pages a visual module.
+- Before producing the first review batch, map the entire known outline into semantic modules so later pages inherit the correct visual family even when generation resumes in another turn.
+- A module may contain two pages, five pages, or one page. Never force a fixed three-page grouping unless the content itself supports it.
+- For a multi-page module, choose an anchor page that establishes its visual motif and composition language. Dependent pages should reuse recognizable elements such as scene, metaphor, illustration treatment, card geometry, border language, or spatial rhythm while varying layout enough to avoid duplication.
+- Adjacent modules should retain the deck-level visual identity but may intentionally change their central metaphor and composition family.
+- If a user approves an early batch, preserve those approved pages. When later work reveals a cross-boundary module, use the approved page nearest that module as the anchor; do not silently redesign approved pages unless continuity cannot be repaired otherwise.
+
+Example module map:
+
+```text
+Pages 1-2: opening and hook — cinematic journey motif
+Pages 3-5: story setup — landscape route motif
+Pages 6-7: insight 1 — stepping-stone motif, page 6 anchor
+Pages 8-9: insight 2 — branching-road motif, page 8 anchor
+Pages 21-22: reflection and action — ascending-card motif, page 21 anchor
+Pages 23-24: summary and ending — seed/growth motif, page 23 anchor
+```
 
 ## Parallelization Strategy
 
@@ -130,7 +153,7 @@ Keep sequential:
 - final PDF packaging from the approved ordered `slides_pack/`,
 - final verification and delivery notes.
 
-Parallel generation rule: every parallel slide prompt must reference the same shared style brief, exact page title, exact body text, reference-image role, and negative constraints. If outputs drift in style, stop batching and regenerate affected pages with a tighter shared style brief.
+Parallel generation rule: parallelize by independent semantic modules, not by arbitrary consecutive page counts. Every parallel slide prompt must reference the same deck-level brief plus its own module-level brief, exact page title, exact body text, reference-image role, and negative constraints. Keep anchor-before-dependent ordering within a module. If outputs drift, stop batching and regenerate the affected module using its anchor page as visual context.
 
 ## Output Folder
 
@@ -204,6 +227,10 @@ Check before packaging:
 - reference-image style is followed without copying forbidden content,
 - illustrations, backgrounds, icons, book covers, posters, road signs, labels, stickers, badges, and decorative elements do not contain long text, dense pseudo-writing, or unintended paragraphs,
 - style is consistent across independently generated pages,
+- semantic modules follow the planned page ranges rather than mechanical generation batches,
+- every multi-page module has a recognizable shared motif and layout family,
+- pages on opposite sides of a review-batch boundary still match when they belong to the same module,
+- adjacent modules remain recognizably part of the same deck without looking like accidental duplicates,
 - PDF uses the approved final slide images from `slides_pack/`,
 - if total pages exceed 30, chunk PDFs cover all pages in order without overlap or missing pages,
 - if the user explicitly requested PPTX, PDF and PPTX use the same final slide images.
